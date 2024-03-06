@@ -1,11 +1,11 @@
-from flask import Flask, render_template, request, Response, flash, g, redirect
+from flask import Flask, render_template, request, Response, flash, g, redirect, session 
 from flask_wtf.csrf import CSRFProtect
 import forms
 
 from config import DevelopmentConfig
 
 from models import db
-from models import Empleados
+from models import Empleados, EncabezadoVenta, DetalleVenta
 
 
 app = Flask(__name__)
@@ -19,7 +19,6 @@ def page_not_found(e):
 
 @app.before_request
 def before_request():
-    #g.nombre = 'Daniel'
     print('before_request')
 
 @app.after_request
@@ -106,6 +105,32 @@ def alum():
     
     return render_template("alumnos.html", form = alum_form, nombre = nom, apePa = apa, apeMa = ama)
 
+
+
+
+@app.route("/pizzeria", methods = ["GET","POST"])
+def pizzeria():
+    if 'venta' not in session:
+            session['venta'] = EncabezadoVenta()
+    vent_form = forms.VentaPizzaForm(request.form)
+    if request.method == "POST" and vent_form.validate() :
+        session['venta'].nombre = vent_form.nombre.data
+        session['venta'].direccion = vent_form.direccion.data
+        session['venta'].telefono = vent_form.telefono.data
+        db.session.add(session['venta'])
+        db.session.commit()
+    return render_template("index.html",form=vent_form)
+
+
+@app.route("/listaPizzas", methods = ["POST"])
+def listaPizzas():
+    pizza_form = forms.PizzaForm(request.form)
+    if request.method == "POST" and pizza_form.validate() :
+        session['venta'].detalleVenta.append(DetalleVenta(pina=pizza_form.pina.data, jamon=pizza_form.jamon.data, 
+                                             champinones=pizza_form.champinones.data, cantidad=pizza_form.cantidad.data,
+                                             tamanio=pizza_form.tamanio))
+        pizza_form = forms.PizzaForm()
+    return render_template("index.html",form=pizza_form)
 
 if __name__ == "__main__":
     csrf.init_app(app)

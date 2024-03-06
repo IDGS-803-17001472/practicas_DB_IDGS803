@@ -1,5 +1,5 @@
 from wtforms import Form
-from wtforms import StringField, SelectField, RadioField, EmailField, IntegerField, DecimalField
+from wtforms import StringField, SelectField, RadioField, EmailField, IntegerField, DecimalField, BooleanField
 from wtforms import validators
 
 class EmpleadoForm(Form):
@@ -52,4 +52,28 @@ class DicTraerPalabra(Form):
     ])
     txtPalaEsp=StringField('txtPalaEsp',[
         validators.DataRequired(message='el campo es requerido')
+    ])
+
+class PizzaForm():
+    tamanio= RadioField('tamaño', choices=[('chica','Chica $40'),('mediana','Mediana $80'),('grande','Grande $120')])
+    jamon=BooleanField('jamon')
+    pina=BooleanField('pina')
+    champinones=BooleanField('champinones')
+    cantidad = IntegerField('cantidad', [
+        validators.DataRequired(message='el campo es requerido'),
+       validators.number_range(min=1, max=30, message='valor no valido')
+    ])
+
+class VentaPizzaForm:
+    nombre=StringField('nombre',[
+        validators.DataRequired(message='el campo es requerido'),
+        validators.length(min=4, max=50, message='ingresa un nombre valido')
+    ])
+    direccion=StringField('direccion',[
+        validators.DataRequired(message='el campo es requerido'),
+        validators.length(min=4, max=50, message='ingresa una direccion valida')
+    ])
+    telefono=IntegerField('telefono', [
+        validators.DataRequired(message='el campo es requerido'),
+       validators.number_range(min=1, max=10, message='valor no valido')
     ])

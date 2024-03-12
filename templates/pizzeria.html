@@ -3,54 +3,201 @@
 {%block content%}
 {% from "_macros.html" import render_field %}
 <div class="container">
-    <h4><a href="/ABC_Empleados" class="btn btn-danger">regresar</a></h4>
     <div class="row">
+        <div class="span12">
         <form name="registrar" action="/pizzeria" id="registrar" method="post">
             <div class="row control-group">
-                <div class="form-group col-xs-12 float-label-form-group">
-                    {{render_field(form.nombre, class="form-control")}}
+                <div class="span4">
+                <div class="form-group  float-label-form-group">
+                    {{render_field(formv.nombre, class="form-control")}}
                 </div>
-                <div class="form-group col-xs-12 float-label-form-group">
-                    {{render_field(form.email, class="form-control")}}
                 </div>
-                    <div class="form-group col-xs-12 float-label-form-group">
-                        {{render_field(form.direccion, class="form-control")}}
-                    </div>
-                    <div class="form-group col-xs-12 float-label-form-group">
-                        {{render_field(form.telefono, class="form-control")}}
-                    </div>
-                    <div class="form-group col-xs-12 float-label-form-group">
-                        {{render_field(form.sueldo, class="form-control")}}
-                    </div>
-            <input type="hidden" name="csrf_token" value="{{csrf_token()}}"/>
-            <input type="submit" name="registrar" id="registrar" value="Registrar"/>
-            
-        </div>
+                <div class="span4">
+                <div class="form-group float-label-form-group">
+                    {{render_field(formv.direccion, class="form-control")}}
+                </div>
+            </div>
+        <div class="span4">
+                <div class="form-group  float-label-form-group">
+                    {{render_field(formv.telefono, class="form-control")}}
+                </div>
+                <input type="hidden" name="csrf_token" value="{{csrf_token()}}" />
+            </div>
         </form>
-        <form name="registrar" action="/listaPizzas" id="registrar" method="post">
+            </div>
+    </div>
+    <div class="span12">
+        <form name="pizza" action="/listaPizzas" id="pizza" method="post">
+            <div class="row control-group">
+                <div class="span4">
+                <div class="form-group col-xs-12 float-label-form-group">
+                    {{render_field(formp.tamanio, class="form-control")}}
+                </div>
+            </div>
+            <div class="span4">
+                <div class="form-group col-xs-12 float-label-form-group">
+                    {{render_field(formp.champinones, class="form-control")}}
+                </div>
+                <div class="form-group col-xs-12 float-label-form-group">
+                    {{render_field(formp.pina, class="form-control")}}
+                </div>
+                <div class="form-group col-xs-12 float-label-form-group">
+                    {{render_field(formp.jamon, class="form-control")}}
+                </div>
+            </div>
+            <div class="span3">
+                <div class="form-group col-xs-12 float-label-form-group">
+                    {{render_field(formp.cantidad, class="form-control")}}
+            </div>
+                <input type="hidden" name="csrf_token" value="{{csrf_token()}}" />
+                <input type="submit" name="Pizza" id="subpizza" value="Pizza" />
+
+            </div>
+            </div>
+        </form>
+    </div>
+        <table class="table table-stripped">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Telefono</th>
+                    <th>Direccion</th>
+                    <th>Sueldo</th>
+                    <th>acciones</th>
+
+
+                </tr>
+            </thead>
+            <tbody>
+                {%for piz in pizzas%}
+                <tr>
+                    <td onclick="seleccionarPizza('{{loop.index}}')">Seleccionar</td>
+                    <td>{{piz[4]}}</td>
+                    <td>
+                        {% if piz[2] == True %}
+  champiñones
+{% endif %}
+{% if piz[1] == True %}
+ jamon
+{% endif %}
+{% if piz[0] == True %}
+ piña
+{% endif %}
+                    </td>
+                    <td>{{piz[3]}}</td>
+                    <td>{{subtotal[loop.index]}}</td>
+                </tr>
+                {%endfor%}
+            </tbody>
+            
+            <button type="submit" form="registrar"  name="registrar" id="registrar" value="Registrar" >Terminar</button>
+<br><br>
+        <form name="quitarPizzaForm" action="/quitarPizza" id="quitarPizzaForm" method="post">
+            <div class="row control-group">
+                <input type="hidden" name="selectedPizza" id="selectedPizza" value="0" />
+                <input type="hidden" name="csrf_token" value="{{csrf_token()}}" />
+                <input type="submit" name="quitarPizza" id="quitarPizza" value="Quitar" />
+
+            </div>
+        </form>
+        </table>
+        <table class="table table-stripped">
+            <thead>
+                <tr>
+                <th>Seleccion</th>
+                <th>tamaño</th>
+                <th>ingredientes</th>
+                <th>Cantidad</th>
+                <th>subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {%if  products|length > 0%}
+                {%for vent in ventas%}
+                <tr>
+                    <td>{{vent.tamanio}}</td>
+                    <td>{{vent.email}}</td>
+                    <td>{{vent.telefono}}</td>
+                    <td>{{vent.direccion}}</td>
+                    <td>{{emp.sueldo}}</td>
+                    <td><a href="eliminar?id={{emp.id}}" class="btn btn-danger"> eliminar</a></td>
+                    <td><a href="modificar?id={{emp.id}}" class="btn btn-danger">modificar</a></td>
+                </tr>
+                {%endfor%}
+                {%endif%}
+            </tbody>
+        </table>
+        <form name="ventasForm" action="/listaVentas" id="ventasForm" method="post">
             <div class="row control-group">
                 <div class="form-group col-xs-12 float-label-form-group">
-                    {{render_field(form.nombre, class="form-control")}}
+                    {{render_field(formGetVen.fecha, class="form-control")}}
                 </div>
                 <div class="form-group col-xs-12 float-label-form-group">
-                    {{render_field(form.email, class="form-control")}}
+                    {{render_field(formGetVen.diaOAnio, class="form-control")}}
                 </div>
-                    <div class="form-group col-xs-12 float-label-form-group">
-                        {{render_field(form.direccion, class="form-control")}}
-                    </div>
-                    <div class="form-group col-xs-12 float-label-form-group">
-                        {{render_field(form.telefono, class="form-control")}}
-                    </div>
-                    <div class="form-group col-xs-12 float-label-form-group">
-                        {{render_field(form.sueldo, class="form-control")}}
-                    </div>
-            <input type="hidden" name="csrf_token" value="{{csrf_token()}}"/>
-            <input type="submit" name="registrar" id="registrar" value="Registrar"/>
-            
-        </div>
+                <input type="hidden" name="csrf_token" value="{{csrf_token()}}" />
+                <input type="submit" name="submVentas" id="submVentas" value="Ventas" />
+            </div>
         </form>
-        </div>
     </div>
-</div>
+<script>
+    pizzaSeleccionada=0;
+    function seleccionarPizza(pizza){
+        $("#selectedPizza").val(pizza)
+        alert($("#selectedPizza").val());
+    }
+    
+
+    $(document).ready(function () {
+        $("#btn1").click(function () {
+            server_data = [
+                $('#usuario').val(),
+                $('#password').val() 
+            ];
+            data = $('#form');
+            data.append("usuario", $('#usuario'));
+            data.append("password", $('#password'));
+            $.ajax({
+                url: "/login", type: 'POST',
+                data: JSON.stringify(server_data),
+                contentType: "application/json",
+                dataType: 'json',
+                success: function (result) {
+                    if(result=="baduser"){
+                        alert("usuario incorrecto");
+                    }
+                    if(result=="badpass"){
+                        alert("contraseña incorrecta");
+                    }
+                    if(result=="3"){
+                        window.location.replace("http://127.0.0.1:5000/");
+                    }
+                }
+            });
+        });
+    });
+
+
+    function eliminarPizza(pizza){
+        var data = {
+            "pizza": pizza
+        }
+        var headers = {
+            "Content-Type": "application/json"
+         }
+        console.log(pizza);
+        fetch('quitarPizza', {
+            method: "POST",
+            headers: headers,
+            body:  JSON.stringify(data)
+        }
+            )    
+        .then(response => {
+        console.log(response)
+        });
+    }
+    
+</script>
 
 {%endblock%}

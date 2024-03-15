@@ -5,6 +5,7 @@
 <div class="container">
     <div class="row">
         <div class="span12">
+            <h3>Info Venta</h3>
         <form name="registrar" action="/pizzeria" id="registrar" method="post">
             <div class="row control-group">
                 <div class="span4">
@@ -21,11 +22,22 @@
                 <div class="form-group  float-label-form-group">
                     {{render_field(formv.telefono, class="form-control")}}
                 </div>
+                
                 <input type="hidden" name="csrf_token" value="{{csrf_token()}}" />
             </div>
+            <div class="span4">
+               
+            <div class="form-group  float-label-form-group">
+                <span id="textFecha">Seleccione una fecha</span>
+                <dd><input type="date" id="fecha" name="fecha"  />
+            </div>
+        </dd>
+            </div>
+        </div>
         </form>
             </div>
     </div>
+    <h3>Pizzas Venta</h3>
     <div class="span12">
         <form name="pizza" action="/listaPizzas" id="pizza" method="post">
             <div class="row control-group">
@@ -35,14 +47,22 @@
                 </div>
             </div>
             <div class="span4">
-                <div class="form-group col-xs-12 float-label-form-group">
-                    {{render_field(formp.champinones, class="form-control")}}
+                Ingredientes 
+                <div class="form-group col-xs-12 ">
+                    <br>
+                    <div class="span1">
+                    {{ formp.champinones }}
+                    </div><div class="span2">{{ formp.champinones.label }}</div>
                 </div>
-                <div class="form-group col-xs-12 float-label-form-group">
-                    {{render_field(formp.pina, class="form-control")}}
+                <div class="form-group col-xs-12 ">
+                    <div class="span1">
+                    {{ formp.pina }}
+                    </div><div class="span2">{{ formp.pina.label }}</div>
                 </div>
-                <div class="form-group col-xs-12 float-label-form-group">
-                    {{render_field(formp.jamon, class="form-control")}}
+                <div class="form-group col-xs-12 ">
+                    <div class="span1">
+                    {{ formp.jamon }}
+                    </div><div class="span2">{{ formp.jamon.label }}</div>
                 </div>
             </div>
             <div class="span3">
@@ -50,23 +70,21 @@
                     {{render_field(formp.cantidad, class="form-control")}}
             </div>
                 <input type="hidden" name="csrf_token" value="{{csrf_token()}}" />
-                <input type="submit" name="Pizza" id="subpizza" value="Pizza" />
+                <input type="submit" name="Pizza" id="subpizza" value="Agregar Pizza" />
 
             </div>
             </div>
         </form>
     </div>
+    {%if  pizzas|length > 0%}
         <table class="table table-stripped">
             <thead>
                 <tr>
-                    <th>Nombre</th>
-                    <th>Correo</th>
-                    <th>Telefono</th>
-                    <th>Direccion</th>
-                    <th>Sueldo</th>
-                    <th>acciones</th>
-
-
+                    <th>Seleccionar</th>
+                    <th>Tamaño</th>
+                    <th>Ingredientes</th>
+                    <th>Cantidad</th>
+                    <th>Subtotal</th>
                 </tr>
             </thead>
             <tbody>
@@ -86,12 +104,12 @@
 {% endif %}
                     </td>
                     <td>{{piz[3]}}</td>
-                    <td>{{subtotal[loop.index]}}</td>
+                    <td>{{piz[5]}}</td>
                 </tr>
                 {%endfor%}
             </tbody>
             
-            <button type="submit" form="registrar"  name="registrar" id="registrar" value="Registrar" >Terminar</button>
+            <button type="submit" form="registrar"  name="registrar" id="registrar" value="Registrar" >Terminar Venta</button>
 <br><br>
         <form name="quitarPizzaForm" action="/quitarPizza" id="quitarPizzaForm" method="post">
             <div class="row control-group">
@@ -101,40 +119,52 @@
 
             </div>
         </form>
+        {% endif %}
         </table>
+        <h3>Ventas</h3>
+        {%if  ventas|length > 0 %}
         <table class="table table-stripped">
             <thead>
                 <tr>
-                <th>Seleccion</th>
-                <th>tamaño</th>
-                <th>ingredientes</th>
-                <th>Cantidad</th>
-                <th>subtotal</th>
+                <th>Nombre</th>
+                <th>Telefono</th>
+                <th>Direccion</th>
+                <th>Fecha</th>
+                <th>Total</th>
                 </tr>
             </thead>
             <tbody>
-                {%if  products|length > 0%}
-                {%for vent in ventas%}
-                <tr>
-                    <td>{{vent.tamanio}}</td>
-                    <td>{{vent.email}}</td>
-                    <td>{{vent.telefono}}</td>
-                    <td>{{vent.direccion}}</td>
-                    <td>{{emp.sueldo}}</td>
-                    <td><a href="eliminar?id={{emp.id}}" class="btn btn-danger"> eliminar</a></td>
-                    <td><a href="modificar?id={{emp.id}}" class="btn btn-danger">modificar</a></td>
-                </tr>
-                {%endfor%}
-                {%endif%}
+                               {%for vent in ventas%}
+                               <tr>
+                                   <td>{{vent.nombre}}</td>
+                                   <td>{{vent.telefono}}</td>
+                                   <td>{{vent.direccion}}</td>
+                                   <td>{{vent.fecha_compra}}</td>
+                                   <td>{{vent.total}}</td>
+                               </tr>
+                               {%endfor%}
+                               <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>{{totalV}}</td>
+                            </tr>
             </tbody>
         </table>
-        <form name="ventasForm" action="/listaVentas" id="ventasForm" method="post">
+        {% else %}
+        <h4>No se encontraron ventas</h4>
+        {%endif%}
+        <form name="ventasForm" action="/getVentas" id="ventasForm" method="post">
             <div class="row control-group">
                 <div class="form-group col-xs-12 float-label-form-group">
-                    {{render_field(formGetVen.fecha, class="form-control")}}
+                    {{render_field(formGetVen.filtro, class="form-control")}}
                 </div>
                 <div class="form-group col-xs-12 float-label-form-group">
-                    {{render_field(formGetVen.diaOAnio, class="form-control")}}
+                    {{render_field(formGetVen.dia, class="form-control hidden")}}
+                </div>
+                <div class="form-group col-xs-12 float-label-form-group">
+                    {{render_field(formGetVen.mes, class="form-control  hidden")}}
                 </div>
                 <input type="hidden" name="csrf_token" value="{{csrf_token()}}" />
                 <input type="submit" name="submVentas" id="submVentas" value="Ventas" />
@@ -149,7 +179,29 @@
     }
     
 
+
+
+    
     $(document).ready(function () {
+
+
+$("[name='filtro']").change(function () {
+    if ($(this).val()=="0"){
+      $("[name='dia']").hide();
+      $("[name='mes']").hide();
+    }
+    if ($(this).val()=="1"){
+      $("[name='dia']").show(1000);
+      $("[name='dia']").css("display", "block");
+      $("[name='mes']").hide();
+    }
+    if ($(this).val()=="2"){
+      $("[name='dia']").hide();
+      $("[name='mes']").show(1000);
+      $("[name='mes']").css("display", "block");
+    }
+});
+
         $("#btn1").click(function () {
             server_data = [
                 $('#usuario').val(),
@@ -200,4 +252,12 @@
     
 </script>
 
+<style>
+    [name="mes"]  {
+        display: none;
+    }
+    [name="dia"]  {
+        display: none;
+    }
+</style>
 {%endblock%}

@@ -83,13 +83,13 @@ class VentaPizzaForm(Form):
 class ConsultaVentasForm(Form):
     filtro= SelectField('filtro', choices=[('0','Hoy'),('1', 'Dia'), ('2', 'Mes')])
     dia = SelectField('', choices=[
-    ('0', 'Lunes'), 
-    ('1', 'Martes'),
-    ('2', 'Miércoles'), 
-    ('3', 'Jueves'),
-    ('4', 'Viernes'), 
-    ('5', 'Sábado'), 
-    ('6', 'Domingo')
+    ('2', 'Lunes'), 
+    ('3', 'Martes'),
+    ('4', 'Miércoles'), 
+    ('5', 'Jueves'),
+    ('6', 'Viernes'), 
+    ('7', 'Sábado'), 
+    ('1', 'Domingo')
 ])
     mes = SelectField('', choices=[
     ('1', 'Enero'), 

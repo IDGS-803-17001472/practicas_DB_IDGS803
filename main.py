@@ -89,8 +89,6 @@ def modificar():
         return redirect('ABC_Empleados')
     return render_template("modificar.html", form=emp_form)
 
-
-
 @app.route("/alumnos", methods = ["GET","POST"])
 def alum():
     print("dentro de alumnos")
@@ -114,9 +112,6 @@ pizza_form = forms.PizzaForm()
 vent_form = forms.VentaPizzaForm()
 getVnts_form = forms.ConsultaVentasForm()
 
-
-
-
 @app.route("/getVentas", methods=["POST"])
 def filtrar():
     formVentas = forms.ConsultaVentasForm(request.form)
@@ -127,8 +122,9 @@ def filtrar():
         ventasArray = []
         totalVentas = 0
         if filtro == 0:
-            ventas=EncabezadoVenta.query.filter(cast(EncabezadoVenta.fecha_compra, Date) == date.today()).all()
+            ventas=EncabezadoVenta.query.filter(EncabezadoVenta.fecha_compra== date.today()).all()
             for venta in ventas:
+                print("ventaeeeeeeeeeeeeeeeee")
                 totalVentas+=venta.total
                 ventasArray.append(
                     {
@@ -140,8 +136,9 @@ def filtrar():
                     }
                 )
         if filtro == 1:
-            ventas = EncabezadoVenta.query.filter(func.dayofweek( EncabezadoVenta.fecha_compra)  == dia_sem).all()
+            ventas = EncabezadoVenta.query.filter(func.dayofweek(EncabezadoVenta.fecha_compra) ==dia_sem).all()
             for venta in ventas:
+                print("ventaaaaaaaaaaaaaa")
                 totalVentas+=venta.total
                 ventasArray.append(
                     {
@@ -155,6 +152,8 @@ def filtrar():
         if filtro == 2:
             ventas = EncabezadoVenta.query.filter(func.extract('month', EncabezadoVenta.fecha_compra) == mes).all()
             for venta in ventas:
+                print("ventaiiiiiiiiiiiiiii")
+                totalVentas+=venta.total
                 ventasArray.append(
                     {
                         "nombre": venta.nombre,
@@ -178,14 +177,14 @@ def filtrar():
                     }
                 )
             session["ventas"] = ventasArray
-    return render_template("pizzeria.html",formv=vent_form,formp=pizza_form, formGetVen=getVnts_form, pizzas=session['lista'], ventas=session['ventas'])
+    return render_template("pizzeria.html",formv=vent_form,formp=pizza_form, formGetVen=formVentas, pizzas=session['lista'], ventas=ventasArray, totalV=totalVentas)
 
 
 @app.route("/pizzeria", methods = ["GET","POST"])
 def pizzeria():
     vent_form = forms.VentaPizzaForm(request.form) 
     session['ventas'] = []
-    ventas=EncabezadoVenta.query.filter(cast(EncabezadoVenta.fecha_compra, Date) == date.today()).all()
+    ventas=EncabezadoVenta.query.filter(EncabezadoVenta.fecha_compra == date.today()).all()
     totalVentas = 0
     for venta in ventas:
         totalVentas+=venta.total
@@ -220,10 +219,8 @@ def pizzeria():
         db.session.commit()
         session['lista'] = []
         vent_form = forms.VentaPizzaForm()
+        return redirect("pizzeria")
     return render_template("pizzeria.html",formv=vent_form,formp=pizza_form, formGetVen=getVnts_form, pizzas=session['lista'], ventas=session['ventas'], totalV=totalVentas)
-
-    
-
 
 @app.route("/listaPizzas", methods = ["POST"])
 def listaPizzas():
@@ -248,8 +245,7 @@ def listaPizzas():
                                              pizza_form.tamanio.data, subtotal])
         session.modified = True
         pizza_form = forms.PizzaForm()
-    return render_template("pizzeria.html",formv=vent_form,  formGetVen=getVnts_form,    formp=pizza_form, pizzas=session['lista'], 
-                           ventas=session.get('ventas'))
+    return redirect("pizzeria")
 
 @app.route("/quitarPizza", methods=["GET", "POST"])
 def eliminar():

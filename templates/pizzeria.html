@@ -29,7 +29,7 @@
                
             <div class="form-group  float-label-form-group">
                 <span id="textFecha">Seleccione una fecha</span>
-                <dd><input type="date" id="fecha" name="fecha"  />
+                <dd><input type="date" id="fecha" name="fecha"  required/>
             </div>
         </dd>
             </div>
@@ -90,7 +90,7 @@
             <tbody>
                 {%for piz in pizzas%}
                 <tr>
-                    <td onclick="seleccionarPizza('{{loop.index}}')">Seleccionar</td>
+                    <td  data-index="{{loop.index}}" class="seleccionar">Seleccionar</td>
                     <td>{{piz[4]}}</td>
                     <td>
                         {% if piz[2] == True %}
@@ -161,10 +161,10 @@
                     {{render_field(formGetVen.filtro, class="form-control")}}
                 </div>
                 <div class="form-group col-xs-12 float-label-form-group">
-                    {{render_field(formGetVen.dia, class="form-control hidden")}}
+                    {{render_field(formGetVen.dia, class="form-control")}}
                 </div>
                 <div class="form-group col-xs-12 float-label-form-group">
-                    {{render_field(formGetVen.mes, class="form-control  hidden")}}
+                    {{render_field(formGetVen.mes, class="form-control")}}
                 </div>
                 <input type="hidden" name="csrf_token" value="{{csrf_token()}}" />
                 <input type="submit" name="submVentas" id="submVentas" value="Ventas" />
@@ -174,11 +174,14 @@
 <script>
     pizzaSeleccionada=0;
     function seleccionarPizza(pizza){
-        $("#selectedPizza").val(pizza)
-        alert($("#selectedPizza").val());
+        $("#selectedPizza").val(pizza);
     }
     
-
+    $(".seleccionar").bind("click", function(e) {
+        $(".seleccionar").text("Seleccionar")
+        $(this).text("Seleccionado");
+        seleccionarPizza($(this).data("index"));
+    });
 
 
     
@@ -187,17 +190,15 @@
 
 $("[name='filtro']").change(function () {
     if ($(this).val()=="0"){
-      $("[name='dia']").hide();
-      $("[name='mes']").hide();
+        $("[name='dia']").css("display","none");
+        $("[name='mes']").css("display","none");
     }
     if ($(this).val()=="1"){
-      $("[name='dia']").show(1000);
       $("[name='dia']").css("display", "block");
-      $("[name='mes']").hide();
+      $("[name='mes']").css("display","none");
     }
     if ($(this).val()=="2"){
-      $("[name='dia']").hide();
-      $("[name='mes']").show(1000);
+        $("[name='dia']").css("display","none");
       $("[name='mes']").css("display", "block");
     }
 });
@@ -249,15 +250,18 @@ $("[name='filtro']").change(function () {
         console.log(response)
         });
     }
-    
+
 </script>
 
 <style>
-    [name="mes"]  {
+    [name='dia'] {
         display: none;
     }
-    [name="dia"]  {
+    [name='mes'] {
         display: none;
+    }
+    .seleccionar{
+            cursor: pointer;
     }
 </style>
 {%endblock%}
